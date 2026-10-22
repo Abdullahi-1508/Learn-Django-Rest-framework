@@ -1,0 +1,10 @@
+.env
+*.env.local
+__pycache__/
+venv/
+db.sqlite3
+media/
+staticfiles/
+.vscode/
+.DS_Store
+Thumbs.db
