@@ -25,5 +25,6 @@ class ThrottledTokenObtainPairView(TokenObtainPairView):
 
 urlpatterns = router.urls + [
     path('api/token/', ThrottledTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path("register/", views.RegisterAPIView.as_view(), name= "register"),
     ]
 # Media and files url are in projects urls

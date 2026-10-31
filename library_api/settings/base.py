@@ -14,7 +14,7 @@ from pathlib import Path
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Load environment variables from .env file
 env = environ.Env()
@@ -28,9 +28,6 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG', default=False)
-
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 
 # Application definition
@@ -46,7 +43,7 @@ INSTALLED_APPS = [
     'library',
     'rest_framework_simplejwt',
     'django_filters',
-    'debug_toolbar',
+    
 ]
 
 MIDDLEWARE = [
@@ -57,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'library_api.urls'
@@ -86,6 +83,12 @@ WSGI_APPLICATION = 'library_api.wsgi.application'
 DATABASES = {
     'default': env.db("DATABASE_URL")
 }
+
+# Docker containers cannot use ``localhost`` to reach PostgreSQL on the host.
+# Set DATABASE_HOST in Docker Compose while keeping the local .env URL unchanged.
+database_host = env("DATABASE_HOST", default=None)
+if database_host:
+    DATABASES["default"]["HOST"] = database_host
 
 
 # Password validation
@@ -123,6 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Email
@@ -176,7 +180,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # default 1 day
 }
 
-INTERNAL_IPS = ['127.0.0.1', 'localhost']
 # For production
 #CACHES = {
 #    'default': {
